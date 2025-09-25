@@ -1,0 +1,1017 @@
+{
+  "name": "AI CHATBOT",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "86cbf150-df4f-42f7-b7b3-e03c32e6f23c",
+      "name": "Get Chat",
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "position": [
+        2176,
+        512
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "user",
+              "message": "={{ $('Aggregate Unstructured Text').item.json.question }}"
+            },
+            {
+              "type": "ai",
+              "message": "={{ $('Basic LLM Chain').item.json.text }}"
+            }
+          ]
+        }
+      },
+      "id": "a9153a24-e902-4f29-9b83-447317ce3119",
+      "name": "Insert Chat",
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "position": [
+        3248,
+        528
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "content": "## Get Context",
+        "height": 238.4911357933579,
+        "width": 486.4746124819703,
+        "color": 6
+      },
+      "id": "f5c272d4-248b-45a5-87b5-eb659a865d05",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2144,
+        432
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Save Context",
+        "height": 231.05945912581728,
+        "width": 321.2536584847704,
+        "color": 6
+      },
+      "id": "32ad17ca-0045-487d-9387-71c2e73629d4",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3200,
+        448
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "context",
+        "options": {}
+      },
+      "id": "17ae4f1a-6192-4c52-8157-3cb47b37e0fb",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        2480,
+        512
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "test-0dacb3b5-4bcd-47dd-8456-dcfd8c258204"
+      },
+      "id": "00b3081e-fbcd-489b-b45a-4e847c346594",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        2736,
+        768
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "id": "55ca2790-e905-414a-a9f6-7d88a9e5807d",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        2928,
+        768
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Km0NMG8LxneFDvHD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### The \"Get Chat,\" \"Insert Chat,\" and \"Window Buffer Memory\" nodes will help the LLM model maintain context throughout the conversation.",
+        "height": 91.01435855269375,
+        "width": 487.4293487597613,
+        "color": 6
+      },
+      "id": "94ad934c-4a13-47b1-83a5-76fab43b3a47",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2144,
+        304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "0a96f48d-0d8b-4240-9eab-a681bfd4c8b5",
+      "name": "Limit",
+      "type": "n8n-nodes-base.limit",
+      "position": [
+        3584,
+        528
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json[\"prompt\"]}}\n",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a finance expert. Answer concisely and clearly."
+            }
+          ]
+        }
+      },
+      "id": "9a5d4ddb-6403-4758-858e-9fbe10c421a9",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        2848,
+        528
+      ],
+      "typeVersion": 1.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.jina.ai/v1/embeddings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer jina_9ffc51539629482c9235014e598aa2ebPBNhOvnxx1jWz2kEkVoRjxlYtyFy"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "model",
+              "value": "jina-embeddings-v3"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        1328
+      ],
+      "id": "d8a91098-ae20-4666-9211-a5d4d155cde7",
+      "name": "HTTP Request",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://contracts-index-foxvuyd.svc.aped-4627-b74a.pinecone.io/vectors/upsert",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Api-Key",
+              "value": "pcsk_53NBNZ_RwNNMp94uXGM8Cuc7GikxBAhW6G35mUfUK1upmTEirAGe7eAj38kZgynHR7hQqd"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2112,
+        1280
+      ],
+      "id": "1cacdf40-e069-4cbc-a7e4-f43e6c43648b",
+      "name": "pinecone upsert"
+    },
+    {
+      "parameters": {
+        "jsCode": "// embedding is already on the root from \"attach text\"\nconst emb = $json.embedding ?? [];\n\n// (optional) keep a light check; remove the 1024 strict check if you want\nif (!Array.isArray(emb) || emb.length === 0) {\n  throw new Error(`Embedding missing (type=${typeof emb}, length=${emb.length ?? 'n/a'})`);\n}\n\n// pass item along (or add/normalize fields here if needed)\nreturn [{ json: { ...$json, embedding: emb } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1744,
+        1280
+      ],
+      "id": "5a9c62be-8a0c-4bde-aa83-0f42b44a22c7",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a Pinecone upsert payload from the attached chunks\n// Input items must have: id, doc_id, text, chunk_index, embedding\n\nconst items = $input.all();\n\nconst vectors = items.map((it, idx) => {\n  const j = it.json || {};\n\n  // ensure we always have an id and an array of numbers for values\n  const id = j.id ?? `chunk_${j.chunk_index ?? idx}`;\n  const values = Array.isArray(j.embedding) ? j.embedding : [];\n\n  return {\n    id,\n    values,\n    metadata: {\n      text: j.text ?? \"\",\n      doc_id: j.doc_id ?? \"doc\",\n      chunk_index: j.chunk_index ?? idx,\n    },\n  };\n});\n\n// use doc_id as the namespace (first item), fall back to \"doc\"\nconst namespace = items[0]?.json?.doc_id ?? \"doc\";\n\n// return a single item with the full upsert body\nreturn [\n  {\n    json: {\n      vectors,\n      namespace,\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        1280
+      ],
+      "id": "c2705a06-7f9a-47ea-89ba-c79a980b7297",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "mode": "expression",
+        "numberOutputs": 2,
+        "output": "={{ $binary.file ? 1 : (\n     $json.mode === 'rag' && $json.doc_id && ($json.question || '').trim()\n       ? 1\n       : 0\n   )\n}}\n"
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1824,
+        496
+      ],
+      "id": "ded9b456-db6c-4114-9044-4c272fa3f282",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.jina.ai/v1/embeddings",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer jina_9ffc51539629482c9235014e598aa2ebPBNhOvnxx1jWz2kEkVoRjxlYtyFy"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.question }}"
+            },
+            {
+              "name": "model",
+              "value": "jina-embeddings-v3"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2688,
+        976
+      ],
+      "id": "5edcb17c-fdc2-4992-ab19-36c4f3f55d9c",
+      "name": "HTTP Request1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "let vector = $json.data?.[0]?.embedding || $json.embedding || $json.vector;\n\n// If vector came as a string, parse it\nif (typeof vector === 'string') {\n  try { vector = JSON.parse(vector); } catch {}\n}\n\nreturn {\n  vector,\n  question: $json.question || \"\",\n  doc_id: $json.doc_id || \"\",\n  namespace: $json.doc_id || \"\",\n  topK: 5\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3248,
+        960
+      ],
+      "id": "2439af77-a770-4ed7-8a25-27e3f97044b7",
+      "name": "pinecone query payload code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://contracts-index-foxvuyd.svc.aped-4627-b74a.pinecone.io/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Api-Key",
+              "value": "pcsk_53NBNZ_RwNNMp94uXGM8Cuc7GikxBAhW6G35mUfUK1upmTEirAGe7eAj38kZgynHR7hQqd"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  vector: $json.vector,\n  topK: $json.topK ?? 5,\n  includeMetadata: true,\n  namespace: $json.namespace || $json.doc_id\n}) }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3328,
+        1264
+      ],
+      "id": "90853a60-60ac-49bf-b43a-4d19a9682297",
+      "name": "pinecone query"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// ---- Get question (from the same item or an upstream node) ----\nconst q =\n  $json.question ||\n  $json.payload?.question ||                 // if you wrapped it earlier\n  $node[\"Go to RAG\"]?.json?.question || \"\";\n\n// ---- Get matches from Pinecone response (handle both shapes) ----\nconst matches =\n  $json.results?.[0]?.matches ||             // if response is { results: [ { matches: [...] } ] }\n  $json.matches ||                           // if response is { matches: [...] }\n  [];\n\n// ---- Build context from retrieved chunks' metadata.text ----\nconst context = matches\n  .map(m => m.metadata?.text || m.metadata?.chunk || \"\")\n  .filter(Boolean)\n  .join(\"\\n---\\n\");\n\n// ---- Compose a prompt for the LLM ----\nconst prompt = `You are a helpful assistant.\nUse ONLY the context below to answer the question.\nIf the answer isn't in the context, say \"I don't know.\"\n\nContext:\n${context}\n\nQuestion: ${q}\nAnswer:`;\n\n// ---- RETURN ONE OBJECT (Code Item node) ----\nreturn {\n  json: {\n    question: q,\n    context,\n    prompt,\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3856,
+        1040
+      ],
+      "id": "19d6add4-f646-455d-bfe3-67454a53cf42",
+      "name": "RAG Content"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3520,
+        960
+      ],
+      "id": "c382113e-bdf1-4a33-9fb9-84cbf52afa9a",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// after pinecone upsert HTTP node, add a Code node named \"Upsert Result\"\nreturn [{\n  json: {\n    ok: true,\n    upsertedCount: $json.upsertedCount ?? $json.totalUpserted ?? 1,  // adapt to your response\n    doc_id: $json.doc_id || $item(0).$node[\"Aggregate Unstructured Text\"].json.doc_id\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2304,
+        1392
+      ],
+      "id": "ae693f09-0334-4d74-8951-591db45d3faf",
+      "name": "upsert results"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build a new item that the Switch Output 2 would normally accept\nconst doc = $json.doc_id || $item(0).$node[\"Aggregate Unstructured Text\"].json.doc_id;\nconst q   = $item(0).$node[\"Aggregate Unstructured Text\"].json.question || $json.question || \"\";\n\nreturn [{\n  json: {\n    mode: \"rag\",\n    doc_id: doc,\n    question: q\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2736,
+        1376
+      ],
+      "id": "58e1f773-2c0e-4776-92ac-c17123011b97",
+      "name": "Go to RAG"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2128,
+        1104
+      ],
+      "id": "f4a7a5f6-d6d9-4693-a1dd-62b770d62292",
+      "name": "carry original"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3056,
+        960
+      ],
+      "id": "c3bd9e84-8a8c-4993-8d25-5367d81bf631",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ea714daa-6a2a-4fc7-a7cc-583096b3732f",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        480
+      ],
+      "id": "71528a9d-8bac-4b5d-a1bf-f6ad5ee28883",
+      "name": "wh upload",
+      "webhookId": "ea714daa-6a2a-4fc7-a7cc-583096b3732f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.unstructuredapp.io/general/v0/general",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "UNSTRUCTURED-API-KEY",
+              "value": "d5b352XQfRVpE93r9Y5YqvS0Z3xKuM"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "file"
+            },
+            {
+              "name": "question",
+              "value": "={{$json[\"question\"]}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        480
+      ],
+      "id": "4f69fdbc-39be-48c3-a31c-a4fbac144c81",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// collect extracted text chunks coming from the Unstructured HTTP node\nconst texts = $items().map(i => i.json.text).filter(Boolean);\n\n// pull the question from the webhook node (and fallbacks)\nconst q =\n  $json.question ??\n  $item(0).$node['wh upload'].json.body?.question ??\n  $item(0).$node['wh upload'].json.query?.question ??\n  '';\n\n// derive a doc_id from uploaded file name\nconst fileName = $item(0).$node['wh upload'].binary?.file?.fileName || 'upload';\nconst baseName = fileName.replace(/\\.[^.]+$/, '');\nconst doc_id = baseName;\n\nreturn [{\n  json: {\n    mode: 'document',\n    doc_id,\n    source: 'upload',\n    text: texts.join('\\n\\n'),\n    question: q,          // <-- forward the question!\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        480
+      ],
+      "id": "57386183-4c7a-4bb7-a6cc-4dbb159db07b",
+      "name": "Aggregate Unstructured Text"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: (() => {\n    // Pull the question (already forwarded by Aggregate step).\n    // Also safe-fallbacks in case the webhook sent it as query/body.\n    const qRaw =\n      $json.question ??\n      $json.body?.question ??\n      $json.query?.question ??\n      '';\n\n    const q = String(qRaw).trim();\n\n    // Build a clean user prompt (only the question, NOT the document text)\n    const prompt = q\n      ? `You are a helpful assistant. Answer the following question clearly:\\n\\n${q}`\n      : '';\n\n    // Keep everything else (text, doc_id, etc.) and overwrite question/prompt\n    return { ...$json, question: q, prompt };\n  })()\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        480
+      ],
+      "id": "a55dd741-48ae-4a6d-8aa7-8bad0de9d4a7",
+      "name": "normalise question"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Run Once for All Items\nconst input = (items[0] && items[0].json) || {};\nconst fullText = input.text || \"\";\nif (!fullText) {\n  // no text: just pass the item through so pipeline continues\n  return items;\n}\n\nconst doc_id = input.doc_id || (\"doc_\" + Date.now());\nconst words = fullText.split(/\\s+/).filter(Boolean);\nconst size = 80, overlap = 10;\n\nconst out = [];\nfor (let i = 0, idx = 0; i < words.length; i += (size - overlap), idx++) {\n  out.push({\n    json: {\n      doc_id,\n      id: `${doc_id}_chunk_${idx}`,\n      text: words.slice(i, i + size).join(\" \")\n    }\n  });\n}\nreturn out;   // <- MUST return an array of {json: ...}\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        1088
+      ],
+      "id": "f83849e7-164f-47e4-90d7-0f84ba976237",
+      "name": "chunks"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Attach text + embedding after Merge\n// Each item will carry: id, doc_id, text, chunk_index, embedding\n\nreturn $input.all().map((item, i) => {\n  // Try to pull embedding from the Jina response\n  const emb =\n    item.json?.data?.[0]?.embedding || // when raw Jina response is passed\n    item.json?.embedding ||            // if already flattened earlier\n    [];\n\n  return {\n    json: {\n      id: item.json.id ?? `chunk_${i}`,\n      doc_id: item.json.doc_id ?? \"doc\",\n      text: item.json.text ?? \"\",\n      chunk_index: item.json.chunk_index ?? i,\n      embedding: emb\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        1280
+      ],
+      "id": "4fca8e7d-989a-4396-8967-e5144fd2b875",
+      "name": "attach text"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1312,
+        1280
+      ],
+      "id": "901cfad5-7767-4d9f-bd40-33747b2da48a",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2512,
+        1392
+      ],
+      "id": "c843fe45-cd01-4204-ac49-4106dbb4f33e",
+      "name": "Merge upsert result + original"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputs = $input.all();\n\nlet question = null;\nlet answer   = null;\n\n// 1) Try to pick them from the incoming items\nfor (const { json } of inputs) {\n  if (!question) {\n    if (typeof json.question === 'string' && json.question.trim()) {\n      question = json.question.trim();\n    } else if (typeof json.q === 'string' && json.q.trim()) {\n      question = json.q.trim();\n    }\n  }\n  if (!answer) {\n    if (typeof json.text === 'string' && json.text.trim()) {\n      answer = json.text.trim();\n    } else if (typeof json.answer === 'string' && json.answer.trim()) {\n      answer = json.answer.trim();\n    }\n  }\n}\n\n// 2) Fallback: read directly from nodes by name (adjust names if yours differ)\ntry {\n  if (!question) {\n    const rag = $node[\"RAG Content\"];\n    const ragJson = rag?.json ?? null;\n    if (ragJson) {\n      if (typeof ragJson.question === 'string' && ragJson.question.trim()) {\n        question = ragJson.question.trim();\n      } else if (typeof ragJson.q === 'string' && ragJson.q.trim()) {\n        question = ragJson.q.trim();\n      }\n    }\n  }\n} catch (e) { /* ignore */ }\n\ntry {\n  if (!answer) {\n    const llm = $node[\"Basic LLM Chain\"];\n    const llmJson = llm?.json ?? null;\n    if (llmJson && typeof llmJson.text === 'string' && llmJson.text.trim()) {\n      answer = llmJson.text.trim();\n    }\n  }\n} catch (e) { /* ignore */ }\n\n// 3) Guard rails for debugging\nif (!question) {\n  throw new Error(\"pick answer: 'question' not found. Make sure your RAG node outputs {question} (or {q}) and is connected here.\");\n}\nif (!answer) {\n  throw new Error(\"pick answer: 'answer' not found. Make sure your LLM node outputs {text} and is connected here.\");\n}\n\nreturn [{ json: { question, answer } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3872,
+        272
+      ],
+      "id": "f9e4b43f-cf99-44d8-8e58-4ad78dfcab9f",
+      "name": "pick answer"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2432,
+        928
+      ],
+      "typeVersion": 1,
+      "id": "5833b1df-70a3-4419-9dca-2c483a2f9bcf",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Limit": {
+      "main": [
+        []
+      ]
+    },
+    "Get Chat": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Chat": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Insert Chat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "pick answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Insert Chat",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Get Chat",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pinecone upsert": {
+      "main": [
+        [
+          {
+            "node": "upsert results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "pinecone upsert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "chunks",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "carry original",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pinecone query payload code": {
+      "main": [
+        [
+          {
+            "node": "pinecone query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pinecone query": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RAG Content": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "pick answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "RAG Content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "upsert results": {
+      "main": [
+        [
+          {
+            "node": "Merge upsert result + original",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Go to RAG": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "carry original": {
+      "main": [
+        [
+          {
+            "node": "Merge upsert result + original",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "pinecone query payload code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "wh upload": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Unstructured Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Unstructured Text": {
+      "main": [
+        [
+          {
+            "node": "normalise question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "normalise question": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chunks": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "attach text": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "attach text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge upsert result + original": {
+      "main": [
+        [
+          {
+            "node": "Go to RAG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "50404b0f-581d-45b3-ba5e-1694d77c816a",
+  "meta": {
+    "templateId": "2405",
+    "instanceId": "7ef1e319b03bae28350a0a788e6894064dc0bf879c09520be07c1305f048cc06"
+  },
+  "id": "zu9BS4CTqZ7bzcRy",
+  "tags": []
+}
