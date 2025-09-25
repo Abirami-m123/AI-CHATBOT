@@ -1,0 +1,12 @@
+echo ".env
+*.env
+.env.*
+/node_modules
+/.n8n
+*.sqlite
+credentials.json
+" > .gitignore
+
+git add .gitignore
+git commit -m "Add .gitignore to avoid committing secrets"
+git push
